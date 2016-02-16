@@ -12,5 +12,5 @@ object natural {
   def main(args: Array[String]): Unit = {
     println(addNatural(Successor(Zero), Successor(Zero)))
   }
-  
+
 }
