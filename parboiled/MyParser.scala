@@ -1,10 +1,8 @@
+import scala.io.Source
 import org.parboiled2._
-
 import MyGrammar._
 
 ///////////////        PARSER      ////////////////
-
-
 class Read(val input: ParserInput) extends Parser {
   def InputLine = rule {EqParser ~ EOI}
 
