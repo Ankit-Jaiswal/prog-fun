@@ -1,27 +1,47 @@
 import org.parboiled2._
+import scala.io.Source
 
 case class Definitions(statement: String)
 
-class firstParser (val input : ParserInput) extends Parser {
-    def parseA = rule { capture(oneOrMore(CharPredicate.Digit)) }
-    def parseB = rule { 'a' ~ 'b' ~ "c" }
-    def parseC: Rule1[Int] = rule { capture("3") ~> ((_: String).toInt) }
+class ParserClass (val input : ParserInput) extends Parser {
+  def parseA = rule { capture(oneOrMore(CharPredicate.Digit)) }
+  def parseB = rule { 'a' ~ 'b' ~ "c" }
+  def parseC: Rule1[Int] = rule { capture("3") ~> ((_: String).toInt) }
 
-    def parseD = rule { "Def" ~ ": " ~ statement ~ EOI }
-    def statement: Rule1[Definitions] = rule { capture(oneOrMore(ANY)) ~>
+  def parseD = rule { "Def" ~ ": " ~ statement ~ EOI }
+  def statement: Rule1[Definitions] = rule { capture(oneOrMore(ANY)) ~>
                                           ((s: String) => Definitions(s))}
 
-    def parseE = rule {CharPredicate.LowerAlpha}
+  def parseE = rule {CharPredicate.LowerAlpha}
+  def day = rule {"Monday" | "Tuesday" | "Wednesday" | "Thursday" }
+
+  def newlines = rule { oneOrMore('\n') }
+  def ws = rule { oneOrMore(" " | '\t') }
+
+  def week = rule { "Mon" ~ newlines ~ "Tue" ~ newlines ~ "Wed" ~ newlines }
+
 }
 
-object Hi {
-    def main(args: Array[String]) = {
-        println("Hi..parsing is ready!")
-        println(new firstParser("6v886").parseA.run())
-        println(new firstParser("23c5").parseA.run())
-        println(new firstParser("abc").parseB.run())
-        println(new firstParser("3").parseC.run())
-        println(new firstParser("Def: aloo is bhanta").parseD.run())
-        println(new firstParser("c").parseE.run())
-    }
+object firstParser {
+
+  val a = "Mon	Tue		Wed"
+
+  val filelines = Source.fromFile("weekdays.txt").getLines.toList
+  var b = ""
+  for(line <- filelines) {
+    b = b + line + "\n"
+  }
+
+  def main(args: Array[String]) = {
+    println("Hi..parsing is ready!")
+    println(new ParserClass("6v886").parseA.run())
+    println(new ParserClass("23c5").parseA.run())
+    println(new ParserClass("abc").parseB.run())
+    println(new ParserClass("3").parseC.run())
+    println(new ParserClass("Def: aloo is bhanta").parseD.run())
+    println(new ParserClass("c").parseE.run())
+    println(new ParserClass("Thursday").day.run())
+
+    println(new ParserClass(b).week.run())
+  }
 }
