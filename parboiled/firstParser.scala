@@ -5,7 +5,7 @@ case class Definitions(statement: String)
 
 class ParserClass (val input : ParserInput) extends Parser {
   def parseA = rule { capture(oneOrMore(CharPredicate.Digit)) }
-  def parseB = rule { 'a' ~ 'b' ~ "c" }
+  def parseB = rule { zeroOrMore('a') ~ 'b' ~ "c" }
   def parseC: Rule1[Int] = rule { capture("3") ~> ((_: String).toInt) }
 
   def parseD = rule { "Def" ~ ": " ~ statement ~ EOI }
@@ -20,6 +20,7 @@ class ParserClass (val input : ParserInput) extends Parser {
 
   def week = rule { "Mon" ~ newlines ~ "Tue" ~ newlines ~ "Wed" ~ newlines }
 
+  def parseF = rule { CharPredicate.Alpha ++ '*' }
 }
 
 object firstParser {
@@ -36,12 +37,14 @@ object firstParser {
     println("Hi..parsing is ready!")
     println(new ParserClass("6v886").parseA.run())
     println(new ParserClass("23c5").parseA.run())
-    println(new ParserClass("abc").parseB.run())
+    println(new ParserClass("bc").parseB.run())
     println(new ParserClass("3").parseC.run())
     println(new ParserClass("Def: aloo is bhanta").parseD.run())
     println(new ParserClass("c").parseE.run())
     println(new ParserClass("Thursday").day.run())
 
     println(new ParserClass(b).week.run())
+
+    println(new ParserClass("*").parseF.run())
   }
 }
