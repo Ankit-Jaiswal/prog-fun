@@ -1,5 +1,4 @@
 import org.parboiled2._
-import scala.io.Source
 
 case class Definitions(statement: String)
 
@@ -15,23 +14,21 @@ class ParserClass (val input : ParserInput) extends Parser {
   def parseE = rule {CharPredicate.LowerAlpha}
   def day = rule {"Monday" | "Tuesday" | "Wednesday" | "Thursday" }
 
-  def newlines = rule { oneOrMore('\n') }
+  def newlines = rule { zeroOrMore('\n') }
   def ws = rule { oneOrMore(" " | '\t') }
 
   def week = rule { "Mon" ~ newlines ~ "Tue" ~ newlines ~ "Wed" ~ newlines }
 
   def parseF = rule { CharPredicate.Alpha ++ '*' }
+
+  def parseG = rule { "b" ~ "c" | "b" ~ optional("d") }
 }
 
 object firstParser {
 
   val a = "Mon	Tue		Wed"
 
-  val filelines = Source.fromFile("weekdays.txt").getLines.toList
-  var b = ""
-  for(line <- filelines) {
-    b = b + line + "\n"
-  }
+  val b = scala.io.Source.fromFile("weekdays.txt").getLines mkString "\n"
 
   def main(args: Array[String]) = {
     println("Hi..parsing is ready!")
@@ -43,8 +40,10 @@ object firstParser {
     println(new ParserClass("c").parseE.run())
     println(new ParserClass("Thursday").day.run())
 
+    //println(b)
     println(new ParserClass(b).week.run())
 
     println(new ParserClass("*").parseF.run())
-  }
+    println(new ParserClass("b").parseG.run())
+    }
 }
