@@ -9,7 +9,7 @@ class ParserClass (val input : ParserInput) extends Parser {
 
   def parseD = rule { "Def" ~ ": " ~ statement ~ EOI }
   def statement: Rule1[Definitions] = rule { capture(oneOrMore(ANY)) ~>
-                                          ((s: String) => Definitions(s))}
+                                          (Definitions(_))}
 
   def parseE = rule {CharPredicate.LowerAlpha}
   def day = rule {"Monday" | "Tuesday" | "Wednesday" | "Thursday" }
@@ -22,6 +22,8 @@ class ParserClass (val input : ParserInput) extends Parser {
   def parseF = rule { CharPredicate.Alpha ++ '*' }
 
   def parseG = rule { "b" ~ "c" | "b" ~ optional("d") }
+  def parseH = rule{ "bc" | "bd" }
+  def parseI = rule{ capture("a") ~ test(valueStack.peek == "a") }
 }
 
 object firstParser {
@@ -45,5 +47,7 @@ object firstParser {
 
     println(new ParserClass("*").parseF.run())
     println(new ParserClass("b").parseG.run())
+    println(new ParserClass("bd").parseH.run())
+    println(new ParserClass("a").parseI.run())
     }
 }
